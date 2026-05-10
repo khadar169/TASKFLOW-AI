@@ -32,9 +32,19 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-app.get('/', (req, res) => {
-  res.send('TaskFlow AI API is running...');
-});
+// Deployment
+const path = require('path');
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, '../', 'frontend', 'dist', 'index.html'))
+  );
+} else {
+  app.get('/', (req, res) => {
+    res.send('TaskFlow AI API is running...');
+  });
+}
 
 // Middleware
 app.use(notFound);
