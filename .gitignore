@@ -1,0 +1,11 @@
+node_modules/
+.env
+.DS_Store
+dist/
+build/
+.vscode/
+frontend/node_modules/
+backend/node_modules/
+package-lock.json
+frontend/package-lock.json
+backend/package-lock.json

@@ -1,0 +1,15 @@
+{
+  "name": "taskflow-ai-root",
+  "version": "1.0.0",
+  "description": "Root for TaskFlow AI MERN project",
+  "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install --legacy-peer-deps",
+    "dev": "concurrently \"cd backend && npm run server\" \"cd frontend && npm run dev\"",
+    "start": "cd backend && node server.js",
+    "backend": "cd backend && npm run server",
+    "frontend": "cd frontend && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
