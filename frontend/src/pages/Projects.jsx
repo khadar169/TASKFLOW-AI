@@ -1,249 +1,161 @@
-import { useState, useEffect } from 'react';
-import { Plus, Search, MoreVertical, Calendar, Users, Filter, Briefcase } from 'lucide-react';
-import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Briefcase, 
+  Plus, 
+  Filter, 
+  Search, 
+  Video, 
+  Image as ImageIcon, 
+  Mic, 
+  Type, 
+  ChevronRight,
+  Star,
+  Activity
+} from 'lucide-react';
 
 const Projects = () => {
-  const { user } = useAuth();
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [newProject, setNewProject] = useState({
-    title: '',
-    description: '',
-    deadline: '',
-    priority: 'Medium',
-  });
-
-  const fetchProjects = async () => {
-    try {
-      const { data } = await api.get('/projects');
-      setProjects(data);
-    } catch (err) {
-      toast.error('Failed to load projects');
-    } finally {
-      setLoading(false);
+  // --- REAL PROJECTS FROM MULTIMANGO SCREENSHOT ---
+  const projects = [
+    {
+      id: '1',
+      title: 'Omni T2V Elo',
+      description: 'T2V ELO evaluation — compare text-to-video outputs side-by-side.',
+      tags: ['Video', 'AI Eval'],
+      icon: <Video className="w-6 h-6 text-purple-500" />,
+      color: 'bg-purple-500/10'
+    },
+    {
+      id: '2',
+      title: 'Text To Video H2H',
+      description: 'Compare two videos side-by-side to say which is better along different aspects.',
+      tags: ['Video', 'H2H'],
+      icon: <Video className="w-6 h-6 text-blue-500" />,
+      color: 'bg-blue-500/10'
+    },
+    {
+      id: '3',
+      title: 'Text To Audio Video H2H',
+      description: 'Compare text-to-audio-video models side-by-side and evaluate visual quality.',
+      tags: ['Audio', 'Text', 'Video'],
+      icon: <Mic className="w-6 h-6 text-emerald-500" />,
+      color: 'bg-emerald-500/10'
+    },
+    {
+      id: '4',
+      title: 'Language Proficiency Survey',
+      description: 'Survey to collect information about languages you speak and proficiency levels.',
+      tags: ['Multimodal', 'Survey'],
+      icon: <Type className="w-6 h-6 text-amber-500" />,
+      color: 'bg-amber-500/10'
+    },
+    {
+      id: '5',
+      title: 'Text To Image Compare',
+      description: 'Compare AI-generated images for ELO run-specific evaluation side-by-side.',
+      tags: ['Image', 'Text'],
+      icon: <ImageIcon className="w-6 h-6 text-pink-500" />,
+      color: 'bg-pink-500/10'
+    },
+    {
+      id: '6',
+      title: 'Video Color Picker',
+      description: 'Analyze and pick specific color profiles from AI generated video frames.',
+      tags: ['Video', 'Analysis'],
+      icon: <Activity className="w-6 h-6 text-indigo-500" />,
+      color: 'bg-indigo-500/10'
+    },
+    {
+      id: '7',
+      title: 'Omni TTS Elo',
+      description: 'TTS-specific ELO evaluation with language proficiency requirements.',
+      tags: ['Audio', 'Text'],
+      icon: <Mic className="w-6 h-6 text-red-500" />,
+      color: 'bg-red-500/10'
+    },
+    {
+      id: '8',
+      title: 'Omni R2I',
+      description: 'Reasoning-to-Image evaluation for multimodal AI models.',
+      tags: ['Multimodal', 'Image'],
+      icon: <Star className="w-6 h-6 text-yellow-500" />,
+      color: 'bg-yellow-500/10'
     }
-  };
-
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post('/projects', newProject);
-      toast.success('Project created successfully');
-      setShowModal(false);
-      fetchProjects();
-    } catch (err) {
-      toast.error('Failed to create project');
-    }
-  };
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Projects</h1>
-          <p className="text-slate-500 dark:text-slate-400">Manage your AI operation pipelines</p>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <Briefcase className="w-8 h-8 text-primary-500" />
+            Available Projects
+          </h1>
+          <p className="text-slate-400 mt-1">Select a task to begin working on AI evaluations.</p>
         </div>
-        {user?.role === 'Admin' && (
-          <button 
-            onClick={() => setShowModal(true)}
-            className="btn btn-primary gap-2"
-          >
-            <Plus size={18} />
-            New Project
-          </button>
-        )}
+        <button className="flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/20 active:scale-95">
+          <Plus className="w-5 h-5" />
+          Create Project
+        </button>
       </div>
 
-      {/* Filters & Search */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+      <div className="flex flex-wrap items-center gap-3 bg-slate-900/50 p-2 rounded-2xl border border-slate-800">
+        <div className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-medium cursor-pointer">
+          All
+        </div>
+        {['Audio', 'Image', 'Multimodal', 'Text', 'Video'].map((filter) => (
+          <div key={filter} className="px-4 py-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl text-sm font-medium cursor-pointer transition-all">
+            {filter}
+          </div>
+        ))}
+        <div className="flex-1" />
+        <div className="relative">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input 
             type="text" 
             placeholder="Search projects..." 
-            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-lg outline-none focus:ring-2 focus:ring-primary-500"
+            className="pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-white w-64"
           />
         </div>
-        <div className="flex gap-2">
-          <button className="px-4 py-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-lg flex items-center gap-2 text-sm">
-            <Filter size={16} />
-            Filter
-          </button>
-          <select className="px-4 py-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-lg text-sm outline-none">
-            <option>Latest</option>
-            <option>Priority</option>
-            <option>Deadline</option>
-          </select>
-        </div>
       </div>
 
-      {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {loading ? (
-          Array(6).fill(0).map((_, i) => (
-            <div key={i} className="card h-64 animate-pulse bg-slate-200 dark:bg-slate-800"></div>
-          ))
-        ) : projects.length === 0 ? (
-          <div className="col-span-full py-20 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full mb-4">
-              <Briefcase size={32} className="text-slate-400" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {projects.map((project, index) => (
+          <motion.div
+            key={project.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-primary-500/50 hover:bg-slate-800/50 transition-all cursor-pointer relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <ChevronRight className="w-5 h-5 text-primary-500" />
             </div>
-            <h3 className="text-lg font-bold">No projects found</h3>
-            <p className="text-slate-500">Get started by creating your first project</p>
-          </div>
-        ) : (
-          projects.map((project) => (
-            <div key={project._id} className="card group hover:shadow-lg hover:border-primary-500/50 transition-all">
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className={cn(
-                    "px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider",
-                    project.priority === 'High' || project.priority === 'Critical' ? "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400" :
-                    project.priority === 'Medium' ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400" :
-                    "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400"
-                  )}>
-                    {project.priority}
-                  </div>
-                  <button className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
-                    <MoreVertical size={18} />
-                  </button>
-                </div>
-                
-                <h3 className="text-lg font-bold mb-2 group-hover:text-primary-500 transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-6">
-                  {project.description}
-                </p>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar size={14} />
-                      {new Date(project.deadline).toLocaleDateString()}
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Users size={14} />
-                      {project.members?.length || 0} Members
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-100 dark:border-dark-border flex items-center justify-between">
-                    <div className="flex -space-x-2">
-                      {project.members?.slice(0, 3).map((m, i) => (
-                        <img 
-                          key={i} 
-                          src={m.avatar || `https://ui-avatars.com/api/?name=${m.name}`} 
-                          className="w-8 h-8 rounded-full border-2 border-white dark:border-dark-card" 
-                          alt="member"
-                        />
-                      ))}
-                      {project.members?.length > 3 && (
-                        <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-dark-card flex items-center justify-center text-[10px] font-bold">
-                          +{project.members.length - 3}
-                        </div>
-                      )}
-                    </div>
-                    <span className={cn(
-                      "text-xs font-semibold",
-                      project.status === 'Active' ? "text-primary-500" : "text-slate-400"
-                    )}>
-                      {project.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
+            <div className={`${project.color} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
+              {project.icon}
             </div>
-          ))
-        )}
+
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
+              {project.title}
+            </h3>
+            
+            <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3">
+              {project.description}
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span key={tag} className="px-2 py-1 bg-slate-950 text-slate-500 text-[10px] uppercase tracking-wider font-bold rounded-md border border-slate-800">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        ))}
       </div>
-
-      {/* New Project Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-dark-card rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-200 dark:border-dark-border">
-            <div className="p-6 border-b border-slate-100 dark:border-dark-border">
-              <h2 className="text-xl font-bold">Create New Project</h2>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Project Title</label>
-                <input 
-                  type="text" 
-                  required
-                  className="input" 
-                  placeholder="e.g. LLM Reasoning Benchmark"
-                  value={newProject.title}
-                  onChange={(e) => setNewProject({...newProject, title: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Description</label>
-                <textarea 
-                  required
-                  className="input min-h-[100px]" 
-                  placeholder="Describe the project goals and scope..."
-                  value={newProject.description}
-                  onChange={(e) => setNewProject({...newProject, description: e.target.value})}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Deadline</label>
-                  <input 
-                    type="date" 
-                    required
-                    className="input" 
-                    value={newProject.deadline}
-                    onChange={(e) => setNewProject({...newProject, deadline: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Priority</label>
-                  <select 
-                    className="input"
-                    value={newProject.priority}
-                    onChange={(e) => setNewProject({...newProject, priority: e.target.value})}
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Critical">Critical</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button 
-                  type="button" 
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 btn btn-secondary"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="flex-1 btn btn-primary"
-                >
-                  Create Project
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
-
-function cn(...inputs) {
-  return inputs.filter(Boolean).join(' ');
-}
 
 export default Projects;
